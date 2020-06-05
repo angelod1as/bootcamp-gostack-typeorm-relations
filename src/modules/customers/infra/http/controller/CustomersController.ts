@@ -8,13 +8,13 @@ export default class CustomersController {
   public async create(request: Request, response: Response): Promise<Response> {
     const { name, email } = request.body;
 
-    const customerCreateService = container.resolve(CreateCustomerService);
+    const createCustomer = container.resolve(CreateCustomerService);
 
-    const customer = await customerCreateService.execute({
-      name,
+    const customer = await createCustomer.execute({
       email,
+      name,
     });
 
-    return response.status(200).json(customer);
+    return response.json(customer);
   }
 }

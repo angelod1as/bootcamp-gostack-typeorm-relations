@@ -1,11 +1,7 @@
-import {
-  MigrationInterface,
-  QueryRunner,
-  Table,
-  TableForeignKey,
-} from 'typeorm';
+import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
-class CreateOrdersProducts1589406391412 implements MigrationInterface {
+export default class CreateOrdersProducts1589783585155
+  implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
@@ -15,6 +11,7 @@ class CreateOrdersProducts1589406391412 implements MigrationInterface {
             name: 'id',
             type: 'uuid',
             isPrimary: true,
+            generationStrategy: 'uuid',
             default: 'uuid_generate_v4()',
           },
           {
@@ -27,7 +24,9 @@ class CreateOrdersProducts1589406391412 implements MigrationInterface {
           },
           {
             name: 'price',
-            type: 'int',
+            type: 'decimal',
+            precision: 8,
+            scale: 2,
           },
           {
             name: 'quantity',
@@ -35,28 +34,32 @@ class CreateOrdersProducts1589406391412 implements MigrationInterface {
           },
           {
             name: 'created_at',
-            type: 'timestamp with time zone',
+            type: 'timestamp',
             default: 'now()',
           },
           {
             name: 'updated_at',
-            type: 'timestamp with time zone',
+            type: 'timestamp',
             default: 'now()',
           },
         ],
         foreignKeys: [
-          new TableForeignKey({
-            name: 'FK_orders_products_product',
+          {
+            name: 'ProductId',
             columnNames: ['product_id'],
+            referencedColumnNames: ['id'],
             referencedTableName: 'products',
-            referencedColumnNames: ['id'],
-          }),
-          new TableForeignKey({
-            name: 'FK_orders_products_order',
+            onUpdate: 'CASCADE',
+            onDelete: 'SET NULL',
+          },
+          {
+            name: 'OrderId',
             columnNames: ['order_id'],
-            referencedTableName: 'orders',
             referencedColumnNames: ['id'],
-          }),
+            referencedTableName: 'orders',
+            onUpdate: 'CASCADE',
+            onDelete: 'SET NULL',
+          },
         ],
       }),
     );
@@ -66,5 +69,3 @@ class CreateOrdersProducts1589406391412 implements MigrationInterface {
     await queryRunner.dropTable('orders_products');
   }
 }
-
-export default CreateOrdersProducts1589406391412;
